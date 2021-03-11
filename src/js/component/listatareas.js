@@ -9,6 +9,7 @@ export function ListaTareas(props) {
 		});
 
 		props.updateList(newList);
+		props.updateTodoList();
 	};
 	return (
 		<div className="listaDiv">
@@ -34,5 +35,6 @@ export function ListaTareas(props) {
 }
 ListaTareas.propTypes = {
 	list: PropTypes.array,
-	updateList: PropTypes.func
+	updateList: PropTypes.func,
+	updateTodoList: PropTypes.func
 };

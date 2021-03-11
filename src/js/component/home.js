@@ -20,7 +20,8 @@ export function Home() {
 	useEffect(() => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes")
 			.then(resp => resp.json())
-			.then(data => setList(data));
+			.then(data => setList(data))
+			.catch(error => console.error("Error: ", error));
 	}, []);
 	const myAlert = () => {
 		swal({
@@ -30,15 +31,18 @@ export function Home() {
 			button: "Okay!"
 		});
 	};
-
-	const handleSubmit = e => {
-		e.preventDefault();
-		if (task === "") {
-			myAlert();
-		} else {
-			setList([...list, { label: task, done: false }]);
-		}
-		setTask("");
+	const loadtodoList = () => {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			}
+		})
+			.then(resp => resp.json())
+			.then(data => setList(data))
+			.catch(error => console.error("Error: ", error));
+	};
+	const updateTodoList = () => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
 			method: "PUT",
 			headers: {
@@ -47,10 +51,47 @@ export function Home() {
 			body: JSON.stringify(list)
 		})
 			.then(resp => resp.json())
-			.then(data => console.log(data));
+			.then(data => console.log("Respuesta del servidor: ", data))
+			.catch(error => console.error("Error: ", error));
+	};
+	const handleSubmit = e => {
+		e.preventDefault();
+		if (task === "") {
+			myAlert();
+		} else {
+			setList([...list, { label: task, done: false }]);
+		}
+		setTask("");
+		updateTodoList();
+	};
+	const newTodoList = () => {
+		let listArray = [];
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
+			method: "POST",
+			body: JSON.stringify(listArray),
+			headers: { "Content-Type": "application/json" }
+		})
+			.then(response => response.json())
+			.then(data => {
+				console.log("newTodoList ", data);
+				loadtodoList();
+			})
+			.catch(error => console.error("Error: ", error));
 	};
 	const handleChange = e => {
 		setTask(e.target.value);
+	};
+	const deleteEvething = () => {
+		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
+			method: "DELETE",
+			headers: { "Content-Type": "application/json" }
+		})
+			.then(response => response.json())
+			.then(data => {
+				newTodoList();
+				console.log(data);
+			})
+			.catch(error => console.error("Error: ", error));
 	};
 
 	return (
@@ -69,8 +110,21 @@ export function Home() {
 						value={task}
 					/>
 				</form>
-				<ListaTareas list={list} updateList={setList} />
+				<ListaTareas
+					list={list}
+					updateList={setList}
+					updateTodoList={updateTodoList}
+				/>
 				<cite>{"Pending tasks: " + list.length}</cite>
+			</div>
+			<div className="btnDeleteContainer">
+				<button
+					onClick={() => {
+						deleteEvething();
+					}}
+					className="deleteAllButton">
+					Delete Everything
+				</button>
 			</div>
 		</React.Fragment>
 	);
