@@ -7,30 +7,11 @@ export function Home() {
 	const [list, setList] = useState([]);
 	const [task, setTask] = useState("");
 
-	// fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
-	// 	method: "PUT",
-	// 	headers: {
-	// 		"Content-Type": "application/json"
-	// 	},
-	// 	body: JSON.stringify(list)
-	// })
-	// 	.then(resp => resp.json())
-	// 	.then(data => console.log(data));
-
+	//realizará metodo GET
 	useEffect(() => {
-		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes")
-			.then(resp => resp.json())
-			.then(data => setList(data))
-			.catch(error => console.error("Error: ", error));
+		loadtodoList();
 	}, []);
-	const myAlert = () => {
-		swal({
-			title: "Oops!",
-			text: "Need to add a task",
-			icon: "warning",
-			button: "Okay!"
-		});
-	};
+
 	const loadtodoList = () => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
 			method: "GET",
@@ -42,6 +23,7 @@ export function Home() {
 			.then(data => setList(data))
 			.catch(error => console.error("Error: ", error));
 	};
+	//utilizado cada vez que se realicen actualizaciones(añadir o eliminar tareas en este caso)
 	const updateTodoList = () => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
 			method: "PUT",
@@ -62,8 +44,10 @@ export function Home() {
 			setList([...list, { label: task, done: false }]);
 		}
 		setTask("");
-		updateTodoList();
+		updateTodoList(); //se ejecutará para actualizar con las nuevas tareas
 	};
+
+	//
 	const newTodoList = () => {
 		let listArray = [];
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
@@ -78,10 +62,12 @@ export function Home() {
 			})
 			.catch(error => console.error("Error: ", error));
 	};
+
+	//añadir tarea, la cual será el valor escrito en el input
 	const handleChange = e => {
 		setTask(e.target.value);
 	};
-	const deleteEvething = () => {
+	const deleteEverything = () => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
 			method: "DELETE",
 			headers: { "Content-Type": "application/json" }
@@ -94,6 +80,17 @@ export function Home() {
 			.catch(error => console.error("Error: ", error));
 	};
 
+	window.onload = function() {
+		setList([]);
+	};
+	const myAlert = () => {
+		swal({
+			title: "Oops!",
+			text: "Need to add a task",
+			icon: "warning",
+			button: "Okay!"
+		});
+	};
 	return (
 		<React.Fragment>
 			<div className="text-center">
@@ -120,7 +117,7 @@ export function Home() {
 			<div className="btnDeleteContainer">
 				<button
 					onClick={() => {
-						deleteEvething();
+						deleteEverything();
 					}}
 					className="deleteAllButton">
 					Delete Everything
