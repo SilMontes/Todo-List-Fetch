@@ -11,6 +11,10 @@ export function Home() {
 	useEffect(() => {
 		loadtodoList();
 	}, []);
+	useEffect(() => {
+		console.log(list);
+		updateTodoList();
+	}, [list]);
 
 	const loadtodoList = () => {
 		fetch("https://assets.breatheco.de/apis/fake/todos/user/SilMontes", {
@@ -44,7 +48,7 @@ export function Home() {
 			setList([...list, { label: task, done: false }]);
 		}
 		setTask("");
-		updateTodoList(); //se ejecutará para actualizar con las nuevas tareas
+		console.log(list);
 	};
 
 	//
@@ -80,9 +84,6 @@ export function Home() {
 			.catch(error => console.error("Error: ", error));
 	};
 
-	window.onload = function() {
-		setList([]);
-	};
 	const myAlert = () => {
 		swal({
 			title: "Oops!",
